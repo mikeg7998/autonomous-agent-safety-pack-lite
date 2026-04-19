@@ -1,47 +1,59 @@
-# Autonomous Agent Safety Pack — Lite
+# Autonomous Agent Safety Pack — Lite (3 of 12 patterns, MIT)
 
-Three drop-in patterns for anyone running autonomous agents that touch
-money, messages, or paid APIs.
+Three defensive patterns for autonomous Python agents, open-sourced under MIT.
+Each pattern is a single-folder drop-in: code, a `SKILL.md` explaining the
+pattern and why it exists, an `install.sh`, and tests.
 
-These are 3 of the 12 patterns from the full
-[OpenClaw Update Fix Pack](https://safety-pack-landing.vercel.app).
+## Patterns
 
-## What's here
+### `push_gate/`
+A single chokepoint for every outbound side-effect in an agent system —
+HTTP posts, webhook deliveries, message sends, email calls. Gives you rate
+limits, payload deduplication, a circuit breaker, quiet hours, and an
+append-only audit log, in one file, with no external dependencies beyond
+the standard library.
 
-| Pattern | What it prevents |
-|---|---|
-| `push_gate` | Runaway Telegram/Slack rate-limit bans, dedup spam, circuit-breaker meltdowns |
-| `unit_conversion_tests` | Silent 100x bugs from unit/type/scale mismatches |
-| `git_filter_scrub` | Accidentally committed secrets in git history |
+### `unit_conversion_tests/`
+A pytest regression template for unit assumptions at API boundaries. You
+copy `test_template.py` into your project, point it at your real adapter,
+and get test coverage over the four things that silently break when an
+upstream changes unit: type, unit, scale, boundary.
+
+### `git_filter_scrub/`
+A hardened wrapper around `git-filter-repo` for removing secrets from
+every commit in a repository's history, with a smoke test that proves it
+actually did what it said it did on a planted secret.
 
 ## Install
 
-Drop the pattern folder into your project. No framework, no
-dependencies beyond the standard library. Python 3.11+ for the two
-Python patterns; `git_filter_scrub` is a bash wrapper around
-[`git-filter-repo`](https://github.com/newren/git-filter-repo).
-
-## Test
+Each pattern has its own `install.sh`. From the repo root:
 
 ```bash
-cd push_gate && python -m pytest tests/
-cd unit_conversion_tests && python -m pytest tests/
-cd git_filter_scrub && bash tests/test_scrub.sh
+./push_gate/install.sh
+./unit_conversion_tests/install.sh
+./git_filter_scrub/install.sh
 ```
 
-(`git_filter_scrub` tests will SKIP cleanly if `git-filter-repo` is
-not installed.)
+Or use the top-level `install.sh` to install all three.
 
-## The full pack
+## Tests
 
-The other 9 patterns cover: human-in-loop money approval, API credit
-caps, allowlist filtering, LLM provider fallback, proximity-based
-rate tiering, OpenClaw update survival (snapshot/canary/rollback),
-plugin manifest pinning, config schema drift detection, and agent
-health watchdog.
+```bash
+python -m pytest tests/ -q
+```
 
-→ [safety-pack-landing.vercel.app](https://safety-pack-landing.vercel.app)
+Each pattern's own tests also live alongside its source and can be run directly:
+
+```bash
+python -m pytest push_gate/test_push_gate.py -q
+python -m pytest unit_conversion_tests/test_template.py -q
+bash   git_filter_scrub/test_scrub.sh
+```
 
 ## License
 
-MIT — use these however you want, no attribution required.
+MIT. See `LICENSE`.
+
+---
+
+Full 12-pattern pack with additional modules available at safety-pack-landing.vercel.app

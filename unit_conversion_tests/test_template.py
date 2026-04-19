@@ -17,7 +17,7 @@ from typing import Any
 import pytest
 
 # ---- REPLACE THIS IMPORT WITH YOUR ADAPTER ---------------------------------
-from unit_conversion_tests import fetch_balance_cents_as_dollars as parse_balance
+from example_api_wrapper import fetch_balance_cents_as_dollars as parse_balance
 # ---------------------------------------------------------------------------
 
 
